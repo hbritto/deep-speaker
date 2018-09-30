@@ -4,9 +4,11 @@ import os
 
 import namedtupled
 
+# from pprint import pprint
+
 logger = logging.getLogger(__name__)
 
-CONFIGURATION_FILENAME = 'conf.json'
+CONFIGURATION_FILENAME = './deep_speaker/conf.json'
 
 
 def filename_to_named_tuple(filename):

@@ -4,8 +4,8 @@ import numpy as np
 import os
 import pickle
 
-from constants import c
-from speech_features import get_mfcc_features_390
+from .constants import c
+from .speech_features import get_mfcc_features_390
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,8 @@ def generate_features(audio_entities, max_count, progress_bar=False):
         voice_only_signal = audio_entity['audio_voice_only']
         cuts = np.random.uniform(low=1, high=len(voice_only_signal), size=2)
         signal_to_process = voice_only_signal[int(min(cuts)):int(max(cuts))]
-        features_per_conv = get_mfcc_features_390(signal_to_process, c.AUDIO.SAMPLE_RATE, max_frames=None)
+        features_per_conv = get_mfcc_features_390(
+            signal_to_process, c.AUDIO.SAMPLE_RATE, max_frames=None)
         if len(features_per_conv) > 0:
             features.append(features_per_conv)
     return features
@@ -76,7 +77,8 @@ class InputsGenerator:
         if self.multi_threading:
             num_threads = os.cpu_count()
             logger.info('Using {} threads.'.format(num_threads))
-            parallel_function(self.generate_and_dump_inputs_to_pkl, sorted(self.speaker_ids), num_threads)
+            parallel_function(self.generate_and_dump_inputs_to_pkl,
+                              sorted(self.speaker_ids), num_threads)
         else:
             logger.info('Using only 1 thread.')
             for s in self.speaker_ids:
@@ -99,7 +101,8 @@ class InputsGenerator:
     def generate_and_dump_inputs_to_pkl(self, speaker_id):
 
         if speaker_id not in c.AUDIO.SPEAKERS_TRAINING_SET:
-            logger.info('Discarding speaker for the training dataset (cf. conf.json): {}.'.format(speaker_id))
+            logger.info(
+                'Discarding speaker for the training dataset (cf. conf.json): {}.'.format(speaker_id))
             return
 
         output_filename = os.path.join(self.inputs_dir, speaker_id + '.pkl')
@@ -115,7 +118,8 @@ class InputsGenerator:
     def generate_inputs_for_inference(self, speaker_id):
         speaker_cache, metadata = self.audio_reader.load_cache([speaker_id])
         audio_entities = list(speaker_cache.values())
-        logger.info('Generating the inputs necessary for the inference (speaker is {})...'.format(speaker_id))
+        logger.info(
+            'Generating the inputs necessary for the inference (speaker is {})...'.format(speaker_id))
         logger.info('This might take a couple of minutes to complete.')
         feat = generate_features(audio_entities, self.max_count_per_class, progress_bar=False)
         mean = np.mean([np.mean(t) for t in feat])
@@ -163,9 +167,12 @@ class SpeakersToCategorical:
         from keras.utils import to_categorical
         self.speaker_ids = sorted(list(data.keys()))
         self.int_speaker_ids = list(range(len(self.speaker_ids)))
-        self.map_speakers_to_index = dict([(k, v) for (k, v) in zip(self.speaker_ids, self.int_speaker_ids)])
-        self.map_index_to_speakers = dict([(v, k) for (k, v) in zip(self.speaker_ids, self.int_speaker_ids)])
-        self.speaker_categories = to_categorical(self.int_speaker_ids, num_classes=len(self.speaker_ids))
+        self.map_speakers_to_index = dict(
+            [(k, v) for (k, v) in zip(self.speaker_ids, self.int_speaker_ids)])
+        self.map_index_to_speakers = dict(
+            [(v, k) for (k, v) in zip(self.speaker_ids, self.int_speaker_ids)])
+        self.speaker_categories = to_categorical(
+            self.int_speaker_ids, num_classes=len(self.speaker_ids))
 
     def get_speaker_from_index(self, index):
         return self.map_index_to_speakers[index]

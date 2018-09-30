@@ -7,7 +7,7 @@ import librosa
 import numpy as np
 from tqdm import tqdm
 
-from utils import parallel_function
+from .utils import parallel_function
 
 logger = logging.getLogger(__name__)
 

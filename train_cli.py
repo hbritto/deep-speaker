@@ -13,9 +13,9 @@ from keras.layers import Dense, Lambda
 from keras.optimizers import Adam
 from natsort import natsorted
 
-from constants import c
-from triplet_loss import deep_speaker_loss
-from utils import data_to_keras
+from .constants import c
+from .triplet_loss import deep_speaker_loss
+from .utils import data_to_keras
 
 BATCH_SIZE = 900
 
