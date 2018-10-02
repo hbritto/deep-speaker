@@ -107,3 +107,4 @@ def inference_embeddings(audio_reader, speaker_id):
     print('*' * 80)
     print(emb1)
     print('*' * 80)
+    return emb1
